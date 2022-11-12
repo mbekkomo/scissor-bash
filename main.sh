@@ -2,4 +2,4 @@
 
 . scissor.sh
 
-echo "$(scissor_trim "   abc")"
+echo "hello$(scissor_padmiddle "abc" 5)hi"
