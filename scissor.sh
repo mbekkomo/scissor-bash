@@ -53,6 +53,13 @@ scissor_trim() {
 	echo "$trimmed_string"
 }
 
+# Usage:
+# scissor_padleft <string> <final_len> [pattern=" "]
+#
+# Details:
+# Add padding #final_len# to the left side of string.
+# If "pattern" passed, it'll uses the value of $pattern
+# instead " ".
 scissor_padleft() {
 	local string="$1"
 	local final_len="$2"

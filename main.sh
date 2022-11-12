@@ -2,4 +2,4 @@
 
 . scissor.sh
 
-echo "$(scissor_padleft "hi" 3 "-")"
+echo "$(scissor_trim "   abc")"
