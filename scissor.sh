@@ -6,7 +6,7 @@
 # Return:
 # > string The repeated string
 #
-# Details:
+# =====================================
 # Repeat a string #repn# times. If "sep" passed,
 # repeated string will be separated with $sep value.
 scissor_repeat() {
@@ -29,7 +29,7 @@ scissor_repeat() {
 # Nameref:
 # ~ array Nameref of the 1st argument
 #
-# Details:
+# =====================================
 # Split a string into array and put it into
 # nameref $array. If "del" passed, string containing
 # $del will be splitted.
@@ -49,7 +49,7 @@ scissor_split() {
 # Return:
 # > string Trimmed string
 #
-# Details:
+# =====================================
 # Trim spaces in string.
 scissor_trim() {
 	local string="$1"
@@ -68,7 +68,7 @@ scissor_trim() {
 # Return:
 # > string Padded string
 #
-# Details:
+# =====================================
 # Add padding #final_len# to the left side of string.
 # If "pattern" passed, it'll uses the value of $pattern
 # instead " ".
@@ -86,7 +86,7 @@ scissor_padleft() {
 # Return:
 # > string Padded string
 #
-# Details:
+# =====================================
 # Add padding #final_len# to the right side of string.
 # If "pattern" passed, it'll uses the value of $pattern
 # instead " ".
@@ -98,6 +98,16 @@ scissor_padright() {
 	echo "$string$(scissor_repeat "$pattern" $((( final_len - ${#string} ) / ${#pattern})))"
 }
 
+# Usage:
+# scissor_padmiddle <string> <final_len> [pattern=" "]
+#
+# Return:
+# > string Padded string
+#
+# =====================================
+# Add padding #final_len# to the both left and right side of string.
+# If "pattern" passed, it'll uses the value of $pattern
+# instead " ".
 scissor_padmiddle() {
 	local string="$1"
 	local final_len="$2"
@@ -105,4 +115,61 @@ scissor_padmiddle() {
 	
 	local pad;pad=$(scissor_repeat "$pattern" $((( final_len - ${#string} ) / ${#pattern})))
 	echo "$pad$string$pad" 
+}
+
+# Usage:
+# scissor_endswith <string> <match>
+#
+# Return:
+# > exitcode The result of the function
+#
+# =====================================
+# Check if $string is ends with $match
+scissor_endswith() {
+	local string="$1"
+	local match="$2"
+
+	if [[ $string =~ $match$ ]]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+# Usage:
+# scissor_startswith <string> <match>
+#
+# Return:
+# > exitcode The result of the function
+#
+# =====================================
+# Check if $string starts with $match
+scissor_startswith() {
+	local string="$1"
+	local match="$2"
+
+	if [[ $string =~ ^$match ]]; then
+		return 0
+	else
+		return 1
+	fi
+}
+
+scissor_random() {
+	local len="$1"
+	local min_oct="${2:-040}"
+	local max_oct="${3:-176}"
+
+	local -a buff
+	for _ in $(seq 1 "$len"); do
+		local oct;oct=$(shuf -i "$min_oct-$max_oct" -n 1)
+		if [[ ! $oct =~ ^00[1-9]$ ]]; then
+			oct="00$oct"
+		elif [[ ! $oct =~ ^0[1-9]\{2\}$ ]]; then
+			oct="0$oct"
+		fi
+		buff+=("$(echo -e "\\$oct")")
+	done
+
+	echo "${buff[@]}"
 }
