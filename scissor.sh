@@ -191,6 +191,7 @@ scissor_charindex() {
 	local string="${1:?argument #1 is empty!}"
 	local index="${2:-1}"
 
+	string=$(sed -E "s/[ ]+/\*/g" <<< "$string")
 	for i in $(seq 1 "${#string}"); do
 		string="$(sed -E "s/(.{$i})/\1 /g" <<< "$string")"
 	done
@@ -199,7 +200,7 @@ scissor_charindex() {
 	local -i i=1
 	echo $string
 	for s in $string; do
-		buff[$i]="$s"
+		buff[$i]="${s//*/ }"
 		i+=1
 	done
 
