@@ -2,4 +2,4 @@
 
 . scissor.sh
 
-echo $(scissor_random 3)
+scissor_charindex "HI LUA" 3

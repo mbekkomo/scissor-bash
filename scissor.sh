@@ -10,12 +10,12 @@
 # Repeat a string #repn# times. If "sep" passed,
 # repeated string will be separated with $sep value.
 scissor_repeat() {
-	local string="$1"
-	local repeat_number="$2"
+	local string="${1:?argument #1 is empty!}"
+	local repeat_number="${2:?argument #2 is empty!}"
 	local separator="${3:-}"
 
 	local repeated_string
-	for _ in $(seq 0 "$repeat_number"); do
+	for U_ in $(seq 0 "$repeat_number"); do
 		repeated_string="${string}${separator}${string}"
 	done
 	repeated_string="${repeated_string}${separator}${string}"
@@ -34,12 +34,12 @@ scissor_repeat() {
 # nameref $array. If "del" passed, string containing
 # $del will be splitted.
 scissor_split() {
-	local -n array="$1"
-	local string="$2"
+	local -n _Array="${1:?argument #1 is empty!}"
+	local string="${2:?argument #2 is empty!}"
 	local del="${3:- }"
 
-	for s in $(sed "s/$del/ /g" <<< $string); do
-		array+=("$s")
+	for s in ${string//$del/ }; do
+		_Array+=("$s")
 	done
 }
 
@@ -52,12 +52,44 @@ scissor_split() {
 # =====================================
 # Trim spaces in string.
 scissor_trim() {
-	local string="$1"
+	local string="${1:?argument #1 is empty!}"
 
 	local trimmed_string
-	trimmed_string="$(echo "$string" |
-		sed -E "s/^[ ]+//g" |
-		sed -E "s/[ ]+$//g")"
+	trimmed_string="$(sed -E "s/^[ ]+//g;s/[ ]+$//g" <<< "$string")"
+
+	echo "$trimmed_string"
+}
+
+# Usage:
+# scissor_trimleft <string>
+#
+# Return:
+# > string Trimmed string
+#
+# =====================================
+# Trim spaces in the left side of the string.
+scissor_trimleft() {
+	local string="${1:?argument #1 is empty!}"
+
+	local trimmed_string
+	trimmed_string="$(sed -E "s/^[ ]+//g" <<< "$string")"
+
+	echo "$trimmed_string"
+}
+
+# Usage:
+# scissor_trimright <string>
+#
+# Return:
+# > string Trimmed string
+#
+# =====================================
+# Trim spaces in the right side of the string.
+scissor_trimright() {
+	local string="${1:?argument  #1 is empty!}"
+
+	local trimmed_string
+	trimmed_string="$(sed -E "s/[ ]+$//g" <<< "$string")"
 
 	echo "$trimmed_string"
 }
@@ -73,8 +105,8 @@ scissor_trim() {
 # If "pattern" passed, it'll uses the value of $pattern
 # instead " ".
 scissor_padleft() {
-	local string="$1"
-	local final_len="$2"
+	local string="${1:?argument #1 is empty!}"
+	local final_len="${2:?argument #2 is empty!}"
 	local pattern="${3:- }"
 
 	echo "$(scissor_repeat "$pattern" $((( final_len - ${#string} ) / ${#pattern})))$string"
@@ -91,11 +123,11 @@ scissor_padleft() {
 # If "pattern" passed, it'll uses the value of $pattern
 # instead " ".
 scissor_padright() {
-	local string="$1"
-	local final_len="$2"
+	local string="${1:?argument #1 is empty!}"
+	local final_len="${2:?argument #2 is empty!}"
 	local pattern="${3:- }"
 
-	echo "$string$(scissor_repeat "$pattern" $((( final_len - ${#string} ) / ${#pattern})))"
+	echo "$string$(scissor_repeat "$pattern" $(( ( final_len - ${#string} ) / ${#pattern} )) )"
 }
 
 # Usage:
@@ -109,11 +141,11 @@ scissor_padright() {
 # If "pattern" passed, it'll uses the value of $pattern
 # instead " ".
 scissor_padmiddle() {
-	local string="$1"
-	local final_len="$2"
+	local string="${1:?argument #1 is empty!}"
+	local final_len="${2:?argument #2 is empty!}"
 	local pattern="${3:- }"
 	
-	local pad;pad=$(scissor_repeat "$pattern" $((( final_len - ${#string} ) / ${#pattern})))
+	local pad;pad=$(scissor_repeat "$pattern" $(( ( final_len - ${#string} ) / ${#pattern})) )
 	echo "$pad$string$pad" 
 }
 
@@ -126,8 +158,8 @@ scissor_padmiddle() {
 # =====================================
 # Check if $string is ends with $match
 scissor_endswith() {
-	local string="$1"
-	local match="$2"
+	local string="${1:?argument #1 is empty!}"
+	local match="${2:?argument #2 is empty!}"
 
 	if [[ $string =~ $match$ ]]; then
 		return 0
@@ -145,8 +177,8 @@ scissor_endswith() {
 # =====================================
 # Check if $string starts with $match
 scissor_startswith() {
-	local string="$1"
-	local match="$2"
+	local string="${1:?argument #1 is empty!}"
+	local match="${2:?argument #2 is empty!}"
 
 	if [[ $string =~ ^$match ]]; then
 		return 0
@@ -155,21 +187,21 @@ scissor_startswith() {
 	fi
 }
 
-scissor_random() {
-	local len="$1"
-	local min_oct="${2:-040}"
-	local max_oct="${3:-176}"
+scissor_charindex() {
+	local string="${1:?argument #1 is empty!}"
+	local index="${2:-1}"
 
-	local -a buff
-	for _ in $(seq 1 "$len"); do
-		local oct;oct=$(shuf -i "$min_oct-$max_oct" -n 1)
-		if [[ ! $oct =~ ^00[1-9]$ ]]; then
-			oct="00$oct"
-		elif [[ ! $oct =~ ^0[1-9]\{2\}$ ]]; then
-			oct="0$oct"
-		fi
-		buff+=("$(echo -e "\\$oct")")
+	for i in $(seq 1 "${#string}"); do
+		string="$(sed -E "s/(.{$i})/\1 /g" <<< "$string")"
 	done
 
-	echo "${buff[@]}"
+	local -a buff
+	local -i i=1
+	echo $string
+	for s in $string; do
+		buff[$i]="$s"
+		i+=1
+	done
+
+	echo "${buff[$index]}"
 }
