@@ -32,7 +32,7 @@ scissor_repeat() {
 # =====================================
 # Split a string into array and put it into
 # nameref $array. If "del" passed, string containing
-# $del will be splitted.
+# $del will be split.
 scissor_split() {
 	local -n _Array="${1:?argument #1 is empty!}"
 	local string="${2:?argument #2 is empty!}"
@@ -187,21 +187,38 @@ scissor_startswith() {
 	fi
 }
 
+# Usage:
+# scissor_charindex <string> <index>
+#
+# Return:
+# > string The index value (char) of string
+#
+# =====================================
+# Getting the char index in string, much
+# like Ruby's string index.
 scissor_charindex() {
 	local string="${1:?argument #1 is empty!}"
-	local index="${2:-1}"
+	local index="${2:?argument #2 is empty!}"
 
-	string=$(sed -E "s/[ ]+/\*/g" <<< "$string")
+	string=$(sed -E "s/[ ]+/!@#/g" <<< "$string")
 	for i in $(seq 1 "${#string}"); do
 		string="$(sed -E "s/(.{$i})/\1 /g" <<< "$string")"
 	done
 
 	local -a buff
 	local -i i=1
-	echo $string
+	local -i space_occur=1
 	for s in $string; do
-		buff[$i]="${s//*/ }"
-		i+=1
+		if [[ $s = '!' && $space_occur -eq 1 || $s = '@' && $space_occur -eq 2 ]]; then
+			space_occur+=1
+		elif [[ $s = '#' && $space_occur -eq 3 ]]; then
+			buff[$i]=" "
+			space_occur=1
+			i+=1
+		else
+			buff[$i]="$s"
+			i+=1
+		fi
 	done
 
 	echo "${buff[$index]}"

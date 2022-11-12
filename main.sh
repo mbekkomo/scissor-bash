@@ -2,4 +2,4 @@
 
 . scissor.sh
 
-scissor_charindex "HI LUA" 3
+scissor_charindex "HI LUA C" 8
