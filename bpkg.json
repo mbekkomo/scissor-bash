@@ -1,0 +1,8 @@
+{
+  "name": "scissor-bash",
+  "version": "0.1.0",
+  "description": "String Manipulation library for Bash",
+  "install": "install -b scissor.sh ${PREFIX:-/usr/local}/bin/scissor.sh",
+  "scripts": [ "scissor.sh" ]
+}
+
