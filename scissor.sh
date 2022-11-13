@@ -44,7 +44,7 @@ scissor_split() {
 }
 
 # Usage:
-# scissor_trim <string>
+# scissor_trim <string> [pattern=" "]
 #
 # Return:
 # > string Trimmed string
@@ -53,15 +53,16 @@ scissor_split() {
 # Trim spaces in string.
 scissor_trim() {
 	local string="${1:?argument #1 is empty!}"
+	local pattern="${2:- }"
 
 	local trimmed_string
-	trimmed_string="$(sed -E "s/^[ ]+//g;s/[ ]+$//g" <<< "$string")"
+	trimmed_string="$(sed -E "s/^[$pattern]+//g;s/[$pattern]+$//g" <<< "$string")"
 
 	echo "$trimmed_string"
 }
 
 # Usage:
-# scissor_trimleft <string>
+# scissor_trimleft <string> [pattern=" "]
 #
 # Return:
 # > string Trimmed string
@@ -70,15 +71,16 @@ scissor_trim() {
 # Trim spaces in the left side of the string.
 scissor_trimleft() {
 	local string="${1:?argument #1 is empty!}"
+	local pattern="${2:- }"
 
 	local trimmed_string
-	trimmed_string="$(sed -E "s/^[ ]+//g" <<< "$string")"
+	trimmed_string="$(sed -E "s/^[$pattern]+//g" <<< "$string")"
 
 	echo "$trimmed_string"
 }
 
 # Usage:
-# scissor_trimright <string>
+# scissor_trimright <string> [pattern=" "]
 #
 # Return:
 # > string Trimmed string
@@ -87,9 +89,10 @@ scissor_trimleft() {
 # Trim spaces in the right side of the string.
 scissor_trimright() {
 	local string="${1:?argument  #1 is empty!}"
+	local pattern="${2:- }"
 
 	local trimmed_string
-	trimmed_string="$(sed -E "s/[ ]+$//g" <<< "$string")"
+	trimmed_string="$(sed -E "s/[$pattern]+$//g" <<< "$string")"
 
 	echo "$trimmed_string"
 }
