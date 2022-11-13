@@ -200,7 +200,7 @@ scissor_charindex() {
 	local string="${1:?argument #1 is empty!}"
 	local index="${2:?argument #2 is empty!}"
 
-	string=$(sed -E "s/[ ]+/!@#/g" <<< "$string")
+	string=$(sed -E "s/[ ]+//g" <<< "$string")
 	for i in $(seq 1 "${#string}"); do
 		string="$(sed -E "s/(.{$i})/\1 /g" <<< "$string")"
 	done
@@ -209,9 +209,9 @@ scissor_charindex() {
 	local -i i=1
 	local -i space_occur=1
 	for s in $string; do
-		if [[ $s = '!' && $space_occur -eq 1 || $s = '@' && $space_occur -eq 2 ]]; then
+		if [[ $s = '' && $space_occur -eq 1 || $s = '' && $space_occur -eq 2 ]]; then
 			space_occur+=1
-		elif [[ $s = '#' && $space_occur -eq 3 ]]; then
+		elif [[ $s = '' && $space_occur -eq 3 ]]; then
 			buff[$i]=" "
 			space_occur=1
 			i+=1
