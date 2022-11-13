@@ -244,3 +244,8 @@ scissor_truncate() {
 
 	echo "$truncate_string$suffix"
 }
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+	echo "MUST BE IN SCRIPT OR \"source scissor.sh\"!" >&2
+	exit 1
+fi

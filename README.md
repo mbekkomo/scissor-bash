@@ -1,2 +1,2 @@
 # scissor-bash
-String Manipulation library for Bash
+String Manipulation library for Bash ✂
