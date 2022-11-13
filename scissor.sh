@@ -95,57 +95,57 @@ scissor_trimright() {
 }
 
 # Usage:
-# scissor_padleft <string> <final_len> [pattern=" "]
+# scissor_padleft <string> <len> [pattern=" "]
 #
 # Return:
 # > string Padded string
 #
 # =====================================
-# Add padding #final_len# to the left side of string.
+# Add padding #len# to the left side of string.
 # If "pattern" passed, it'll uses the value of $pattern
 # instead " ".
 scissor_padleft() {
 	local string="${1:?argument #1 is empty!}"
-	local final_len="${2:?argument #2 is empty!}"
+	local len="${2:?argument #2 is empty!}"
 	local pattern="${3:- }"
 
-	echo "$(scissor_repeat "$pattern" $((( final_len - ${#string} ) / ${#pattern})))$string"
+	echo "$(scissor_repeat "$pattern" $((( len - ${#string} ) / ${#pattern})))$string"
 }
 
 # Usage:
-# scissor_padright <string> <final_len> [pattern=" "]
+# scissor_padright <string> <len> [pattern=" "]
 #
 # Return:
 # > string Padded string
 #
 # =====================================
-# Add padding #final_len# to the right side of string.
+# Add padding #len# to the right side of string.
 # If "pattern" passed, it'll uses the value of $pattern
 # instead " ".
 scissor_padright() {
 	local string="${1:?argument #1 is empty!}"
-	local final_len="${2:?argument #2 is empty!}"
+	local len="${2:?argument #2 is empty!}"
 	local pattern="${3:- }"
 
-	echo "$string$(scissor_repeat "$pattern" $(( ( final_len - ${#string} ) / ${#pattern} )) )"
+	echo "$string$(scissor_repeat "$pattern" $(( ( len - ${#string} ) / ${#pattern} )) )"
 }
 
 # Usage:
-# scissor_padmiddle <string> <final_len> [pattern=" "]
+# scissor_padmiddle <string> <len> [pattern=" "]
 #
 # Return:
 # > string Padded string
 #
 # =====================================
-# Add padding #final_len# to the both left and right side of string.
+# Add padding #len# to the both left and right side of string.
 # If "pattern" passed, it'll uses the value of $pattern
 # instead " ".
 scissor_padmiddle() {
 	local string="${1:?argument #1 is empty!}"
-	local final_len="${2:?argument #2 is empty!}"
+	local len="${2:?argument #2 is empty!}"
 	local pattern="${3:- }"
 	
-	local pad;pad=$(scissor_repeat "$pattern" $(( ( final_len - ${#string} ) / ${#pattern})) )
+	local pad;pad=$(scissor_repeat "$pattern" $(( ( len - ${#string} ) / ${#pattern})) )
 	echo "$pad$string$pad" 
 }
 
@@ -222,4 +222,25 @@ scissor_charindex() {
 	done
 
 	echo "${buff[$index]}"
+}
+
+# Usage:
+# scissor_truncate <string> <len> [suffix]
+#
+# Return:
+# > string Truncated string (with suffix if
+#  "suffix" passed)
+#
+# =====================================
+# Truncates string to a specified length,
+# add suffix if "suffix" passed.
+scissor_truncate() {
+	local string="${1:?argument #1 is empty!}"
+	local len="${2:?argument #2 is empty!}"
+	local suffix="${3:-}"
+
+	local truncate_string
+	truncate_string="$(sed -E "s/.{$len}$//g" <<< "$string")"
+
+	echo "$truncate_string$suffix"
 }

@@ -2,4 +2,9 @@
 
 . scissor.sh
 
-scissor_charindex "HI LUA C" 8
+str="   Hi Lua    "
+echo "$str"
+str="$(scissor_trim "$str")"
+
+echo "$str"
+echo "$(scissor_truncate "$str" 4 "...")"
